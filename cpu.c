@@ -5,9 +5,13 @@
 #include "cpu.h"
 
 uint8_t cpu_io_block = 0;
+static uint8_t cpu_block_register = 0; // TODO: fix this hack plz
 
 uint16_t cpu_fetch(cpu_t *c)
 {
+	if(c->dt != 0) c->dt--;
+	if(c->st != 0) c->st--;
+
 	if(cpu_io_block) return 0;
 	/*TODO: Fix this ambigious problem 'cause its kinda stupid ngl*/
 
@@ -17,7 +21,10 @@ uint16_t cpu_fetch(cpu_t *c)
 	uint16_t f = (mem_read(c->mem, c->pc + 1) << 8) | mem_read(c->mem, c->pc);
 #endif
 
+	//LOG("%4x : %4x", c->pc, f);
+
 	c->pc += 2;
+
 	return f;
 }
 
@@ -42,7 +49,7 @@ void cpu_execute(cpu_t *c, uint16_t o)
 	{
 		if(keypad)
 		{
-			c->v[X] = keypad;
+			c->v[cpu_block_register] = keypad;
 			cpu_io_block = 0;
 		}
 		return;
@@ -62,6 +69,8 @@ void cpu_execute(cpu_t *c, uint16_t o)
 						       c->pc = f;
 					       } 
 					       break;
+				  default:
+					       goto UKOP;
 			  }
 			  break;
 
@@ -107,6 +116,8 @@ void cpu_execute(cpu_t *c, uint16_t o)
 				  case 0xE: c->v[0xf] = c->v[Y] & 0xA0; 
 					    c->v[X] = c->v[Y] << 1;
 					    break;
+				  default:
+					     goto UKOP;
 			  }
 			  break;
 
@@ -116,20 +127,26 @@ void cpu_execute(cpu_t *c, uint16_t o)
 		case 0xB: c->pc = c->v[0] + NNN; break;
 		case 0xC: c->v[X] = (rand()%256) & NN; break;
 
-		case 0xD: scr_load_sprite(c->scr, c->v[X], c->v[Y], c->mem->data+c->i, N);
+		case 0xD: if(scr_load_sprite(c->scr, c->v[X], c->v[Y], c->mem->data+c->i, N))
+				  c->v[0xF] = 1;
+			  else
+				  c->v[0xF] = 0;
 			  break;
 
 		case 0xE: switch(NN)
 			  {
 				  case 0x9E: if(keypad == c->v[X]) c->pc += 2; break;
 				  case 0xA1: if(keypad != c->v[X]) c->pc += 2; break;
+				  default:
+					     goto UKOP;
 			  }
 			  break;
 
 		case 0xF: switch(NN)
 			  {
 				  case 0x07: c->v[X] = c->dt; break;
-				  case 0x0A: cpu_io_block = 1; break;
+				  case 0x0A: cpu_io_block = 1;
+					     cpu_block_register = X; break;
 				  case 0x15: c->dt = c->v[X]; break;
 				  case 0x18: c->st = c->v[X]; break;
 				  case 0x1E: c->i += c->v[X]; break;
@@ -141,13 +158,24 @@ void cpu_execute(cpu_t *c, uint16_t o)
 					     break;
 				  case 0x55: mem_save(c->mem, c->i, c->v, X+1); break;
 				  case 0x65: mem_load(c->mem, c->v, c->i, X+1); break;
+				  default:
+					     goto UKOP;
 			  }
 			  break;
+		default:
+			  UKOP:
+			  ERR("UNKNOWN OPCODE: %4x", o);
 	}
 }
 
 void cpu_prnt_status(cpu_t *c)
 {
+	if(cpu_io_block)
+	{
+		printf("IO BLOCK\n");
+		return;
+	}
+
 	printf("V: ");
 	for(int i = 0; i < 0x10; i++)
 		printf("%2x\t", c->v[i]);

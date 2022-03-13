@@ -5,6 +5,7 @@
 
 uint8_t mem_read(mem_t *m, uint16_t indx)
 {
+	//LOG("MEM READ: %x", indx);
 	if(indx > m->len)
 		ERR("READ MEM OUT OF BOUNDS | %x |", indx);
 	return m->data[indx];
@@ -12,6 +13,7 @@ uint8_t mem_read(mem_t *m, uint16_t indx)
 
 void mem_write(mem_t *m, uint16_t indx, uint8_t v)
 {
+	//LOG("MEM WRITE: %x", indx);
 	if(indx > m->len)
 		ERR("READ MEM OUT OF BOUNDS | %x |", indx);
 	m->data[indx] = v;

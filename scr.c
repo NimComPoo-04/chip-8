@@ -19,6 +19,7 @@ static uint32_t tp = 0;
 scr_t scr_init(int w, int h)
 {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+
 	win = SDL_CreateWindow("CHIP8",
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			w*siz, h*siz,
@@ -44,17 +45,24 @@ void scr_clear(scr_t *s)
 	memset(s->buffer, 0, s->len);
 }
 
-void scr_load_sprite(scr_t *s, uint8_t x, uint8_t y, uint8_t *dat, uint8_t len)
+int scr_load_sprite(scr_t *s, uint8_t x, uint8_t y, uint8_t *dat, uint8_t len)
 {
+	int collision = 0;
 	for(int i = 0; i < len; i++)
 	{
 		uint8_t v = dat[i];
-		for(int j = 0; j < 8; j++)
+		for(int j = 7; j >= 0; j--)
 		{
-			s->buffer[(y+i) * wid + x + j] = v & 1;
+			uint8_t fx = (x + j) % wid;
+			uint8_t fy = (y + i) % hei;
+
+			if(s->buffer[fy * wid + fx] == 1 && (v & 1) == 1)
+				collision = 1;
+			s->buffer[fy * wid + fx] ^= v & 1;
 			v >>= 1;
 		}
 	}
+	return collision;
 }
 
 int scr_update(scr_t *c)

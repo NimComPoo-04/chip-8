@@ -1,7 +1,7 @@
 #ifndef _SCR_H_
 #define _SCR_H_
 
-#define FPS 2
+#define FPS 50000
 
 typedef struct
 {
@@ -11,7 +11,7 @@ typedef struct
 
 scr_t scr_init(int w, int h);
 void scr_clear(scr_t *s);
-void scr_load_sprite(scr_t *s, uint8_t x, uint8_t y, uint8_t *dat, uint8_t len);
+int scr_load_sprite(scr_t *s, uint8_t x, uint8_t y, uint8_t *dat, uint8_t len);
 void scr_dinit(scr_t *c);
 int scr_update(scr_t *c);
 
