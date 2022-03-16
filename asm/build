@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gcc -Wall -Wextra -O0 -std=c11 -o casm *.c

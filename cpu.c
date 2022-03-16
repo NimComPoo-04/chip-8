@@ -101,7 +101,7 @@ void cpu_execute(cpu_t *c, uint16_t o)
 					    c->v[X] += c->v[Y];
 					    break;
 
-				  case 0x5: c->v[0xf] = c->v[X] - c->v[Y] < 0 ? 0 : 1;
+				  case 0x5: c->v[0xf] = c->v[X] < c->v[Y] ? 0 : 1;
 					    c->v[X] -= c->v[Y];
 					    break;
 
@@ -109,8 +109,8 @@ void cpu_execute(cpu_t *c, uint16_t o)
 					    c->v[X] = c->v[Y] >> 1;
 					    break;
 
-				  case 0x7: c->v[0xf] = -(int8_t)c->v[Y] < 0;
-					    c->v[X] = -c->v[Y];
+				  case 0x7: c->v[0xf] = c->v[X] > c->v[Y] ? 0 : 1;;
+					    c->v[X] = c->v[Y]-c->[X];
 					    break;
 
 				  case 0xE: c->v[0xf] = c->v[Y] & 0xA0; 
@@ -156,8 +156,14 @@ void cpu_execute(cpu_t *c, uint16_t o)
 							     c->mem->data+c->i+1,
 							     c->mem->data+c->i+2);
 					     break;
-				  case 0x55: mem_save(c->mem, c->i, c->v, X+1); break;
-				  case 0x65: mem_load(c->mem, c->v, c->i, X+1); break;
+				  case 0x55: mem_save(c->mem, c->i, c->v, X+1);
+					     c->i += X+1;
+					     break;
+
+				  case 0x65: mem_load(c->mem, c->v, c->i, X+1);
+					     c->i += X+1;
+					     break;
+
 				  default:
 					     goto UKOP;
 			  }

@@ -1,0 +1,65 @@
+An Assembler for the chip 8 machine
+
+This program is independent of the Emulator
+
+INTRINSIC :=
+
+; comment
+:label
+%const imm
+
+NUMBER :=
+
+$numB  <- binary
+$numO  <- octal
+$numD  <- decimal
+$numX  <- hexadecimal
+
+INSTRUCTIONS:=
+
+cls		;; clear screen
+ret		;; return from subroutine
+
+jmp	addr	;; jump unconditional to addr
+jsr	addr	;; jump to subroutine at addr
+jrl	addr	;; jump to (addr + v0)
+
+brc	eq	vx	imm	;; execute next condition if vx == imm
+	ne	vx	imm	;; execute next condition if vx != imm
+	eq	vx	vy	;; executes next condition if vx == vy
+	ne	vx	vy	;; executes next condition if vx != vy
+
+ldr	vx	imm	;; loads imm to vx
+	i	imm	;; loads imm to i
+
+add	vx	imm	;; adds imm to vx (no carry) i	vx	;; adds vx to i (no carry)
+
+mov	vx	vy	;; moves value of vy to vx
+	vx	dt	;; load value of dt to vx
+	dt	vx	;; load value of vx to dt
+	st	vx	;; load value of vx to st
+
+or	vx	vy	;; or vx and vy
+and	vx	vy	;; and vx and vy
+xor	vx	vy	;; xor vx and vy
+
+adc	vx	vy	;; add vx and vy (carry)
+sub	vx	vy	;; sub vx and vy (borrow)
+
+shl	vx	vy	;; bit shift vy 1 to the left and store in vx
+shr	vx	vy	;; bit shift vy 1 to the right and store in vx
+
+rnd	vx	imm	;; random number mask of imm
+
+draw	vx	vy	imm	;; draw sprite of i to (x,y)... reads only imm bytes
+
+key	down	vx	;; if key of vx is down then it does not skip the instruction
+	up	vx	;; if key of vx is down then it does not skip the instruction
+	hold	vx	;; block cpu until input and then store it on vx
+
+sprite	vx	;; loads the value of sprite onto i
+
+bcd	vx	;; loads binary coded decimal on i i+1 and i+2
+
+stm	vx	;; save the value of register v[0-x] to mem
+ldm	vx	;; inverse of stm
