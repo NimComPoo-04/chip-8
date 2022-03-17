@@ -5,15 +5,17 @@ This program is independent of the Emulator
 INTRINSIC :=
 
 ; comment
-:label
-%const imm
+: label
+= const imm
 
 NUMBER :=
 
-$numB  <- binary
-$numO  <- octal
-$numD  <- decimal
-$numX  <- hexadecimal
+default is decimal
+
+0b1010
+0o1021
+0d0203
+0xabcd
 
 INSTRUCTIONS:=
 
@@ -63,3 +65,15 @@ bcd	vx	;; loads binary coded decimal on i i+1 and i+2
 
 stm	vx	;; save the value of register v[0-x] to mem
 ldm	vx	;; inverse of stm
+
+--------------------------------------------------------------------------------
+
+Lexer:  tokenize all tokens into a list
+	register location with lables
+	replace const with their values
+	remove the comments
+
+Compiler: use list of tokens to generate binary
+	  replace lables with their locations
+
+** Removing the parsing layer because lexer is good enough
