@@ -109,8 +109,8 @@ void cpu_execute(cpu_t *c, uint16_t o)
 					    c->v[X] = c->v[Y] >> 1;
 					    break;
 
-				  case 0x7: c->v[0xf] = c->v[X] > c->v[Y] ? 0 : 1;;
-					    c->v[X] = c->v[Y]-c->[X];
+				  case 0x7: c->v[0xf] = c->v[X] > c->v[Y] ? 0 : 1;
+					    c->v[X] = c->v[Y] - c->v[X];
 					    break;
 
 				  case 0xE: c->v[0xf] = c->v[Y] & 0xA0; 
