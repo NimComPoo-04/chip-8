@@ -1,5 +1,8 @@
+#!/bin/scm
+
 (define src 
   "cls
+  10
    ret
    = fucker 10
    ;; hello bitch
@@ -135,6 +138,12 @@
 ;; Compile ast lol
 ;;
 
+(define compl
+  (lambda (l)
+    (cond
+      ((equal? (caar l) 'opcode) l)
+      (else (error l)))))
+
 ;;
 ;;	Pretty Printing stuff lol
 ;;	'cause why tf not
@@ -155,6 +164,8 @@
 (define ast-without-crust (rem-crust ast))
 (define crepe-list-lol (preprop ast #x200))
 
+(define compiled (map compl ast-without-crust))
+
 (display "+-------------+\n")
 (display "| SOURCE CODE |\n")
 (display "+-------------+\n")
@@ -167,7 +178,14 @@
 (pretty crepe-list-lol)
 (newline)
 
+(display "+----------+\n")
+(display "| BYTECODE |\n")
+(display "+----------+\n")
+(pretty compiled)
+(newline)
+
 (exit)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Friendly reminder that this is the slowest crap i have ever excreted out and i am sorry about it :( ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

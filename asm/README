@@ -77,3 +77,7 @@ Compiler: use list of tokens to generate binary
 	  replace lables with their locations
 
 ** Removing the parsing layer because lexer is good enough
+
+--------------------------------------------------------------------------------
+
+requires scheme r5rs
